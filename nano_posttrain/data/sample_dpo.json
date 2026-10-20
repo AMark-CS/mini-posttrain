@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "What is the capital of France?",
+    "chosen": "The capital of France is Paris, located in the north-central part of the country.",
+    "rejected": "The capital of France is Berlin, which is a major European city."
+  },
+  {
+    "prompt": "Explain recursion in one sentence.",
+    "chosen": "Recursion is a technique where a function calls itself to solve a smaller subproblem of the original problem.",
+    "rejected": "Recursion is a way to make a program really slow and use lots of memory."
+  },
+  {
+    "prompt": "Write a Python one-liner that sums a list of numbers.",
+    "chosen": "sum([1, 2, 3, 4])  # 10",
+    "rejected": "def sum_list(x): return x[0] + sum_list(x[1:])  # crashes on []"
+  },
+  {
+    "prompt": "What is the difference between TCP and UDP?",
+    "chosen": "TCP is a connection-oriented, reliable protocol that guarantees in-order delivery, while UDP is connectionless and best-effort with no delivery guarantees.",
+    "rejected": "TCP and UDP are the same thing with different names."
+  }
+]

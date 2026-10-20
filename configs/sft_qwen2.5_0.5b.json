@@ -1,0 +1,22 @@
+{
+  "model_name": "Qwen/Qwen2.5-0.5B",
+  "data_path": "data/sample_sft.json",
+  "output_dir": "./output/sft",
+  "max_length": 512,
+  "per_device_batch_size": 4,
+  "grad_accum_steps": 4,
+  "learning_rate": 5e-5,
+  "num_epochs": 1,
+  "max_steps": 50,
+  "seed": 42,
+  "use_lora": true,
+  "lora_r": 16,
+  "lora_alpha": 32,
+  "lora_dropout": 0.05,
+  "log_every": 5,
+  "save_every": 50,
+  "dtype": "bfloat16",
+  "use_wandb": true,
+  "wandb_project": "mini-posttrain",
+  "grad_checkpointing": false
+}

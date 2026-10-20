@@ -1,0 +1,32 @@
+[
+  {
+    "messages": [
+      {"role": "user", "content": "What is the capital of France?"},
+      {"role": "assistant", "content": "The capital of France is Paris."}
+    ]
+  },
+  {
+    "messages": [
+      {"role": "user", "content": "Write a one-line Python program that prints 'hello world'."},
+      {"role": "assistant", "content": "print('hello world')"}
+    ]
+  },
+  {
+    "messages": [
+      {"role": "user", "content": "What does HTTP stand for?"},
+      {"role": "assistant", "content": "HTTP stands for HyperText Transfer Protocol."}
+    ]
+  },
+  {
+    "messages": [
+      {"role": "user", "content": "Who wrote 'Pride and Prejudice'?"},
+      {"role": "assistant", "content": "'Pride and Prejudice' was written by Jane Austen, published in 1813."}
+    ]
+  },
+  {
+    "messages": [
+      {"role": "user", "content": "What is 12 times 8?"},
+      {"role": "assistant", "content": "12 times 8 is 96."}
+    ]
+  }
+]

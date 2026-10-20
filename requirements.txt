@@ -1,0 +1,14 @@
+# Core
+torch>=2.1
+transformers>=4.40
+numpy
+
+# Optional: PEFT (for comparison), TRL (for the comparison script), WandB
+peft>=0.10
+trl>=0.10
+datasets>=2.20
+wandb>=0.16
+
+# Dev
+pytest>=8
+ruff>=0.4

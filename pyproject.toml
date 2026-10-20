@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nano-posttrain"
+version = "0.2.0"
+description = "A teaching-level post-training library: SFT + DPO in <1000 LoC, designed to be read in a Sunday afternoon."
+readme = "README.md"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Mark" }]
+keywords = ["llm", "post-training", "sft", "dpo", "lora", "rlhf"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.1",
+    "transformers>=4.40",
+    "numpy",
+]
+
+[project.optional-dependencies]
+peft = ["peft>=0.10"]
+trl = ["trl>=0.10", "datasets>=2.20"]
+wandb = ["wandb>=0.16"]
+dev = [
+    "pytest>=8",
+    "ruff>=0.4",
+    "datasets>=2.20",
+    "trl>=0.10",
+    "peft>=0.10",
+    "wandb>=0.16",
+]
+
+[project.scripts]
+nano-sft = "nano_posttrain.cli.train_sft:main"
+nano-dpo = "nano_posttrain.cli.train_dpo:main"
+nano-eval = "nano_posttrain.eval.eval_harness:main"
+
+[tool.setuptools.packages.find]
+include = ["nano_posttrain*"]
+
+[tool.pytest.ini_options]
+markers = [
+    "smoke: opt-in tests that download a tiny model and run end-to-end",
+]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
