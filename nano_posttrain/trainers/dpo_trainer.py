@@ -18,6 +18,7 @@ import os
 import time
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Callable
 
 import torch
 from torch.optim import AdamW
@@ -73,8 +74,13 @@ _DTYPE_MAP = {
 class DPOTrainer:
     """Single-GPU DPO trainer with LoRA + optional ref-on-CPU."""
 
-    def __init__(self, config: DPOConfig) -> None:
+    def __init__(self, config: DPOConfig, *,
+                 on_step: Callable[[dict[str, int | float]], None] | None = None,
+                 should_stop: Callable[[], bool] | None = None) -> None:
         self.config = config
+        self.on_step = on_step
+        self.should_stop = should_stop or (lambda: False)
+        self.completed_steps = 0
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         set_seed(config.seed)
         self._build()
@@ -194,6 +200,7 @@ class DPOTrainer:
 
     def fit(self) -> None:
         cfg = self.config
+        self.model.train()
         steps_per_epoch = max(1, len(self.loader) // cfg.grad_accum_steps)
         total_steps = steps_per_epoch * cfg.num_epochs if cfg.max_steps == -1 else cfg.max_steps
         log.info("training: %d optimizer steps", total_steps)
@@ -203,10 +210,14 @@ class DPOTrainer:
         micro = 0
         t0 = time.time()
         running = {"loss": 0.0, "n": 0}
+        update_loss = 0.0
         self.optimizer.zero_grad()
 
         for epoch in range(cfg.num_epochs):
             for batch in self.loader:
+                if self.should_stop():
+                    self._save()
+                    return
                 chosen_ids = torch.tensor(batch["chosen_input_ids"], dtype=torch.long, device=self.device)
                 chosen_labels = torch.tensor(batch["chosen_labels"], dtype=torch.long, device=self.device)
                 rejected_ids = torch.tensor(batch["rejected_input_ids"], dtype=torch.long, device=self.device)
@@ -243,6 +254,7 @@ class DPOTrainer:
 
                 (loss / cfg.grad_accum_steps).backward()
                 running["loss"] += float(loss.detach())
+                update_loss += float(loss.detach())
                 running["n"] += 1
                 micro += 1
 
@@ -257,6 +269,12 @@ class DPOTrainer:
                     self.optimizer.step()
                     self.optimizer.zero_grad()
                     step += 1
+                    self.completed_steps = step
+                    if self.on_step is not None:
+                        self.on_step({"step": step, "total_steps": total_steps,
+                                      "loss": update_loss / cfg.grad_accum_steps, "learning_rate": lr,
+                                      "preference_accuracy": metrics["rewards/acc"], "margin": metrics["margin"]})
+                    update_loss = 0.0
                     if step % cfg.log_every == 0:
                         dt = time.time() - t0
                         avg = running["loss"] / max(1, running["n"])

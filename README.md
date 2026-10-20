@@ -105,6 +105,14 @@ Shell launchers still reference old module/data paths; use the package-qualified
 
 ## Tests
 
+### Interactive training hooks
+
+Both trainers accept optional keyword-only `on_step` and `should_stop` callbacks. Existing constructor calls remain supported. `on_step` receives structured metrics after each actual optimizer update (`step`, `total_steps`, `loss`, `learning_rate`; DPO also reports preference accuracy and margin). `completed_steps` records actual updates. `should_stop` is checked before each micro-batch; stopping writes the latest adapter without applying unfinished accumulation. These callbacks support the local GPU lab without parsing log text.
+
+Training now explicitly enters `model.train()` so configured LoRA dropout is effective. The local-lab regression run passed **16 CPU tests**, with **3 opt-in smoke tests skipped**; the stale sample-data test path noted in the earlier verification was corrected to the package's actual data location. The earlier chart remains a historical record of that earlier invocation.
+
+The experiment application stores immutable adapter snapshots and full configuration separately; core checkpoints still do not provide automatic optimizer resume.
+
 ```bash
 python -m pytest tests -q
 python -m pytest tests/test_smoke.py -q --run-smoke

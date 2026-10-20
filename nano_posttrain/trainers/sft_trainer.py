@@ -70,8 +70,13 @@ _DTYPE_MAP = {
 class SFTTrainer:
     """Single-GPU SFT trainer. ~150 LoC of actual training logic."""
 
-    def __init__(self, config: SFTConfig) -> None:
+    def __init__(self, config: SFTConfig, *,
+                 on_step: Callable[[dict[str, int | float]], None] | None = None,
+                 should_stop: Callable[[], bool] | None = None) -> None:
         self.config = config
+        self.on_step = on_step
+        self.should_stop = should_stop or (lambda: False)
+        self.completed_steps = 0
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         set_seed(config.seed)
         self._build()
@@ -146,6 +151,7 @@ class SFTTrainer:
 
     def fit(self) -> None:
         cfg = self.config
+        self.model.train()
         steps_per_epoch = max(1, len(self.loader) // cfg.grad_accum_steps)
         total_steps = steps_per_epoch * cfg.num_epochs if cfg.max_steps == -1 else cfg.max_steps
         log.info("training: %d optimizer steps (%d micro-batches per epoch)", total_steps, len(self.loader))
@@ -155,14 +161,19 @@ class SFTTrainer:
         micro = 0
         t0 = time.time()
         running_loss = 0.0
+        update_loss = 0.0
         self.optimizer.zero_grad()
         for epoch in range(cfg.num_epochs):
             for batch in self.loader:
+                if self.should_stop():
+                    self._save()
+                    return
                 batch = {k: v.to(self.device, non_blocking=True) for k, v in batch.items()}
                 out = self.model(input_ids=batch["input_ids"], attention_mask=batch["attention_mask"])
                 loss = sft_loss(out.logits, batch["labels"]) / cfg.grad_accum_steps
                 loss.backward()
                 running_loss += loss.item() * cfg.grad_accum_steps
+                update_loss += loss.item() * cfg.grad_accum_steps
                 micro += 1
 
                 if micro % cfg.grad_accum_steps == 0:
@@ -176,6 +187,11 @@ class SFTTrainer:
                     self.optimizer.step()
                     self.optimizer.zero_grad()
                     step += 1
+                    self.completed_steps = step
+                    if self.on_step is not None:
+                        self.on_step({"step": step, "total_steps": total_steps,
+                                      "loss": update_loss / cfg.grad_accum_steps, "learning_rate": lr})
+                    update_loss = 0.0
                     if step % cfg.log_every == 0:
                         dt = time.time() - t0
                         tok = cfg.per_device_batch_size * cfg.grad_accum_steps * batch["input_ids"].size(1) * cfg.log_every

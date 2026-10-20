@@ -13,7 +13,7 @@ import torch
 from nano_posttrain.data import DPODataset, SFTDataset, dpo_collate_fn, sft_collate_fn
 
 
-DATA = Path(__file__).resolve().parent.parent / "data"
+DATA = Path(__file__).resolve().parent.parent / "nano_posttrain" / "data"
 
 
 class _StubTokenizer:
