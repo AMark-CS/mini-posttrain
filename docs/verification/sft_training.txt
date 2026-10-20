@@ -1,0 +1,11 @@
+2026-10-20 15:42:14 | INFO    | nano_posttrain.trainers.sft_trainer | config: SFTConfig(model_name='Qwen/Qwen2.5-0.5B', data_path='nano_posttrain/data/sample_sft.json', output_dir='output/readme_sft', max_length=128, per_device_batch_size=1, grad_accum_steps=1, learning_rate=5e-05, weight_decay=0.0, warmup_ratio=0.03, num_epochs=1, max_steps=2, seed=42, use_lora=True, lora_r=16, lora_alpha=32, lora_dropout=0.05, grad_clip=1.0, log_every=1, save_every=500, dtype='bfloat16', use_wandb=False, wandb_project='nano-posttrain', grad_checkpointing=False, max_examples=-1)
+2026-10-20 15:42:14 | INFO    | nano_posttrain.models.load | loading policy model Qwen/Qwen2.5-0.5B (dtype=torch.bfloat16, lora=True)
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+2026-10-20 15:42:16 | INFO    | nano_posttrain.optim.lora | applying LoRA r=16 alpha=32 to 169 modules
+2026-10-20 15:42:17 | INFO    | nano_posttrain.optim.lora | replaced 169 Linear modules with LoRALinear
+2026-10-20 15:42:17 | INFO    | nano_posttrain.trainers.sft_trainer | LoRA trainable params: 11243520 / 505276288 (2.23%)
+2026-10-20 15:42:17 | INFO    | nano_posttrain.data.sft_dataset | SFTDataset: 5 examples
+2026-10-20 15:42:17 | INFO    | nano_posttrain.trainers.sft_trainer | training: 2 optimizer steps (5 micro-batches per epoch)
+2026-10-20 15:42:19 | INFO    | nano_posttrain.trainers.sft_trainer | step 1/2 | loss=2.7812 | lr=0.00e+00 | tok/s=22
+2026-10-20 15:42:19 | INFO    | nano_posttrain.trainers.sft_trainer | step 2/2 | loss=1.4688 | lr=5.00e-05 | tok/s=174
+2026-10-20 15:42:19 | INFO    | nano_posttrain.trainers.sft_trainer | saved checkpoint to output\readme_sft\step_latest

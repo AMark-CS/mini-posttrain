@@ -1,0 +1,6 @@
+{
+  "date": "2026-10-20",
+  "source": "docs/verification.md: retained local pytest invocation results",
+  "default": {"passed": 13, "failed": 1, "skipped": 3},
+  "smoke": {"passed": 3, "failed": 0, "skipped": 0}
+}

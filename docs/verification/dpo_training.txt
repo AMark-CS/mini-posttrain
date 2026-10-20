@@ -1,0 +1,12 @@
+2026-10-20 15:42:41 | INFO    | nano_posttrain.trainers.dpo_trainer | config: DPOConfig(model_name='Qwen/Qwen2.5-0.5B', data_path='nano_posttrain/data/sample_dpo.json', output_dir='output/readme_dpo', max_length=128, max_prompt_length=64, per_device_batch_size=1, grad_accum_steps=1, learning_rate=5e-06, weight_decay=0.0, warmup_ratio=0.05, num_epochs=1, max_steps=2, seed=42, use_lora=True, lora_r=16, lora_alpha=32, lora_dropout=0.05, beta=0.1, gamma=0.0, grad_clip=1.0, log_every=1, save_every=500, dtype='bfloat16', use_wandb=False, wandb_project='nano-posttrain', ref_device='cpu', max_examples=-1)
+2026-10-20 15:42:41 | INFO    | nano_posttrain.models.load | loading policy model Qwen/Qwen2.5-0.5B (dtype=torch.bfloat16, lora=True)
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+2026-10-20 15:42:42 | INFO    | nano_posttrain.optim.lora | applying LoRA r=16 alpha=32 to 169 modules
+2026-10-20 15:42:42 | INFO    | nano_posttrain.optim.lora | replaced 169 Linear modules with LoRALinear
+2026-10-20 15:42:43 | INFO    | nano_posttrain.models.load | loading reference model Qwen/Qwen2.5-0.5B on cpu (dtype=torch.bfloat16)
+2026-10-20 15:42:43 | INFO    | nano_posttrain.trainers.dpo_trainer | LoRA trainable params: 11243520 / 505276288 (2.23%)
+2026-10-20 15:42:43 | INFO    | nano_posttrain.data.dpo_dataset | DPODataset: 4 triplets
+2026-10-20 15:42:43 | INFO    | nano_posttrain.trainers.dpo_trainer | training: 2 optimizer steps
+2026-10-20 15:42:47 | INFO    | nano_posttrain.trainers.dpo_trainer | step 1/2 | loss=0.7027 margin=-0.191 acc=0.00 | lr=0.00e+00 | s/it=3.63
+2026-10-20 15:42:50 | INFO    | nano_posttrain.trainers.dpo_trainer | step 2/2 | loss=0.7157 margin=-0.445 acc=0.00 | lr=5.00e-06 | s/it=3.33
+2026-10-20 15:42:50 | INFO    | nano_posttrain.trainers.dpo_trainer | saved DPO checkpoint to output\readme_dpo\latest
